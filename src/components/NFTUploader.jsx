@@ -1,58 +1,16 @@
 import React, { useState } from "react";
-import { auth, db, storage } from "../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-const NFTUploader = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [file, setFile] = useState(null);
-  const [nftName, setNftName] = useState("");
-  const [description, setDescription] = useState("");
+export default function NFTUploader() {
+  const [image, setImage] = useState(null);
 
-  const handleSignup = async () => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log("User signed up:", userCredential.user);
-    } catch (err) {
-      console.error("Signup failed:", err.message);
-    }
-  };
-
-  const handleUpload = async () => {
-    if (!file || !nftName) return alert("Fill all fields");
-
-    const storageRef = ref(storage, `nfts/${file.name}`);
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-
-    const nftDoc = doc(db, "nfts", nftName);
-    await setDoc(nftDoc, {
-      name: nftName,
-      description,
-      imageUrl: downloadURL,
-      uploadedAt: new Date()
-    });
-
-    alert("NFT uploaded successfully!");
+  const handleUpload = () => {
+    alert("Upload logic here!");
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "400px" }}>
-      <h2>Signup</h2>
-      <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} /><br />
-      <input placeholder="Password" type="password" onChange={(e) => setPassword(e.target.value)} /><br />
-      <button onClick={handleSignup}>Create Account</button>
-
-      <hr />
-      <h2>Upload NFT</h2>
-      <input placeholder="NFT Name" onChange={(e) => setNftName(e.target.value)} /><br />
-      <textarea placeholder="Description" onChange={(e) => setDescription(e.target.value)} /><br />
-      <input type="file" onChange={(e) => setFile(e.target.files[0])} /><br />
-      <button onClick={handleUpload}>Upload NFT</button>
+    <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
+      <input type="file" onChange={(e) => setImage(e.target.files[0])} className="block w-full mb-4" />
+      <button onClick={handleUpload} className="bg-purple-500 text-white px-4 py-2 rounded">Upload NFT</button>
     </div>
   );
-};
-
-export default NFTUploader;
+}
